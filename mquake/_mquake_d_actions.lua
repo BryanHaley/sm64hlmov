@@ -109,6 +109,13 @@ local function local_act_dm_grounded_movement(m)
 			set_mario_action(m, ACT_DM_WATER_MOVEMENT, 0)
 		end
 	end
+
+	-- Auto Duckroll
+	if (m.floor ~= nil and m.controller.buttonDown & L_TRIG ~= 0) then
+		m.pos.y = m.floorHeight + 24
+		set_mario_action(m, ACT_DM_AIR_MOVEMENT, 0)
+		act_dm_air_movement(m)
+	end
 end
 --- @param m MarioState
 local function local_act_dm_air_movement(m)
