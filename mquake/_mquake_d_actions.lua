@@ -113,9 +113,9 @@ local function local_act_dm_grounded_movement(m)
 		end
 	end
 
-	-- Auto Duckroll
+	-- Auto Ducktap
 	if (m.floor ~= nil and m.controller.buttonDown & R_TRIG ~= 0) then
-		m.pos.y = m.floorHeight + 27
+		m.pos.y = m.floorHeight + 36
 		set_mario_action(m, ACT_DM_AIR_MOVEMENT, 0)
 		act_dm_air_movement(m)
 	end
