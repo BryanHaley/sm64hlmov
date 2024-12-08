@@ -45,9 +45,12 @@ local function local_act_dm_grounded_movement(m)
 	end
 	
 	if ((
-		(gGlobalSyncTable.Convar_PlayerAutoHop and (m.controller.buttonDown & A_BUTTON) ~= 0) or
-		(not gGlobalSyncTable.Convar_PlayerAutoHop and (m.controller.buttonPressed & A_BUTTON) ~= 0)
-		) and no_dialog_open() and m.floor ~= nil and (m.controller.buttonDown & R_TRIG) == 0) then
+		(gGlobalSyncTable.Convar_PlayerAutoHop and (m.controller.buttonDown & A_BUTTON) ~= 0) or -- Auto hop is enabled and we're holding A, or
+		(not gGlobalSyncTable.Convar_PlayerAutoHop and (m.controller.buttonPressed & A_BUTTON) ~= 0) -- Auto hop is disabled and we're pressing (not holding) A
+		) and no_dialog_open() and m.floor ~= nil and (
+			-- Ducktap is disabled OR ducktap is enabled and we're not holding R
+			not gGlobalSyncTable.Convar_DucktapEnabled or ((m.controller.buttonDown & R_TRIG) == 0 and gGlobalSyncTable.Convar_DucktapEnabled)
+		)) then
 		set_character_animation(m, CHAR_ANIM_IDLE_HEAD_CENTER)
 		
 		-- m.controller.buttonPressed = m.controller.buttonPressed & ~A_BUTTON
@@ -114,8 +117,8 @@ local function local_act_dm_grounded_movement(m)
 	end
 
 	-- Auto Ducktap
-	if (m.floor ~= nil and m.controller.buttonDown & R_TRIG ~= 0) then
-		m.pos.y = m.floorHeight + 36
+	if (gGlobalSyncTable.Convar_DucktapEnabled and m.floor ~= nil and m.controller.buttonDown & R_TRIG ~= 0) then
+		m.pos.y = m.floorHeight + gGlobalSyncTable.Convar_DucktapHeight
 		set_mario_action(m, ACT_DM_AIR_MOVEMENT, 0)
 		act_dm_air_movement(m)
 	end

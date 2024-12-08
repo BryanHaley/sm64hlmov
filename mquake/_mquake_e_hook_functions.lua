@@ -368,29 +368,33 @@ function on_object_render(o)
 	end
 end
 
--- Temporary hack while I figure out how to deal with this
-local mod_storage_version = 1
+-- sm64coopdx very recently added the capability to see if a number/bool key exists already or not, but we're still supporting old clients,
+-- so this is the workaround. Increment this number whenever you add config items and need to set new defaults.
+local mod_storage_version = 2
 
 function create_default_sm64hlmov_config()
-	mod_storage_save_bool("default.ss",DefaultSettings.stickySlope) -- sticky slope
-	mod_storage_save_bool("default.gp",DefaultSettings.groundPound) -- ground pound
-	mod_storage_save_bool("default.wj",DefaultSettings.wallJump) -- wall jump
-	mod_storage_save_bool("default.i",DefaultSettings.interact) -- interact
-	mod_storage_save_bool("default.as",DefaultSettings.autoStrafe) -- auto strafe
-	mod_storage_save_bool("default.eb",DefaultSettings.ebrake) -- e-brake
-	mod_storage_save_bool("default.ah",DefaultSettings.autoHop) -- auto hop
-	mod_storage_save_number("default.j",DefaultSettings.jumpHeight) -- jump height 
-	mod_storage_save_number("default.f",DefaultSettings.friction) -- friction
-	mod_storage_save_number("default.s",DefaultSettings.speed) -- speed
-	mod_storage_save_number("default.aa",DefaultSettings.airAcceleration) -- air acceleration
-	mod_storage_save_number("default.a",DefaultSettings.acceleration) -- accelerate
-	mod_storage_save_number("default.ac",DefaultSettings.airClamp) -- air clamp
-	mod_storage_save_number("default.g",DefaultSettings.gravity) -- gravity
-	mod_storage_save_number("default.efm",DefaultSettings.edgeFrictionMultiplier) -- edge friction multiplier
-	mod_storage_save_number("default.efgo",DefaultSettings.efGroundOffset) -- edge friction ground offset
-	mod_storage_save_number("default.effcd",DefaultSettings.efForwardCheckDistance) -- edge friction forward check distance
-	mod_storage_save_number("default.efdcd",DefaultSettings.efDownCheckDistance) -- edge friction downwards check distance
-	mod_storage_save_number("default.ebm",DefaultSettings.ebrakeFrictionMultiplier) -- e-brak friction multiplier
+	mod_storage_save_bool("default.ss",DefaultSettings.stickySlope)
+	mod_storage_save_bool("default.gp",DefaultSettings.groundPound)
+	mod_storage_save_bool("default.wj",DefaultSettings.wallJump)
+	mod_storage_save_bool("default.i",DefaultSettings.interact)
+	mod_storage_save_bool("default.as",DefaultSettings.autoStrafe)
+	mod_storage_save_bool("default.eb",DefaultSettings.ebrake)
+	mod_storage_save_bool("default.ah",DefaultSettings.autoHop)
+	mod_storage_save_number("default.j",DefaultSettings.jumpHeight)
+	mod_storage_save_number("default.f",DefaultSettings.friction)
+	mod_storage_save_number("default.s",DefaultSettings.speed)
+	mod_storage_save_number("default.aa",DefaultSettings.airAcceleration)
+	mod_storage_save_number("default.a",DefaultSettings.acceleration)
+	mod_storage_save_number("default.ac",DefaultSettings.airClamp)
+	mod_storage_save_number("default.g",DefaultSettings.gravity)
+	mod_storage_save_number("default.efm",DefaultSettings.edgeFrictionMultiplier)
+	mod_storage_save_number("default.efgo",DefaultSettings.efGroundOffset)
+	mod_storage_save_number("default.effcd",DefaultSettings.efForwardCheckDistance)
+	mod_storage_save_number("default.efdcd",DefaultSettings.efDownCheckDistance)
+	mod_storage_save_number("default.ebm",DefaultSettings.ebrakeFrictionMultiplier)
+	mod_storage_save_bool("default.dt",DefaultSettings.ducktap)
+	mod_storage_save_number("default.dth",DefaultSettings.ducktapHeight)
+	mod_storage_save_number("default.dtfm",DefaultSettings.ducktapFrictionMulitplier)
 
 	mod_storage_save_number("default.msv",mod_storage_version)
 end
@@ -414,11 +418,24 @@ function load_config(config)
 		gGlobalSyncTable.Convar_EdgeFrictionGroundOffset = safe_load_number(config .. ".efgo", DefaultSettings.efGroundOffset)
 		gGlobalSyncTable.Convar_EdgeFrictionForwardCheckDistance = safe_load_number(config .. ".effcd", DefaultSettings.efForwardCheckDistance)
 		gGlobalSyncTable.Convar_EdgeFrictionDownCheckDistance = safe_load_number(config .. ".efdcd", DefaultSettings.efDownCheckDistance)
+		gGlobalSyncTable.Convar_DucktapEnabled = safe_load_bool(config .. ".dt", DefaultSettings.ducktap)
+		gGlobalSyncTable.Convar_DucktapHeight = safe_load_number(config .. ".dth", DefaultSettings.ducktapHeight)
+		gGlobalSyncTable.Convar_DucktapFrictionMultiplier = safe_load_number(config .. ".dtfm", DefaultSettings.ducktapFrictionMulitplier)
 		djui_chat_message_create("\\#A0FFE0\\Loaded config: " .. config)
 
-		-- Temporary hack while I figure out how to deal with this
+		-- Use this to set new defaults when the mod storage version increments
 		if (mod_storage_load_number(config .. ".msv") == nil or mod_storage_load_number(config .. ".msv") < 1) then
-			gGlobalSyncTable.Convar_PlayerAutoHop = true -- Set autohop default true
+			-- Set autohop default true
+			gGlobalSyncTable.Convar_PlayerAutoHop = DefaultSettings.autoHop
+		end
+		if (mod_storage_load_number(config .. ".msv") == nil or mod_storage_load_number(config .. ".msv") < 2) then
+			-- Set ducktap defaults
+			gGlobalSyncTable.Convar_DucktapEnabled = DefaultSettings.ducktap
+			gGlobalSyncTable.Convar_DucktapHeight = DefaultSettings.ducktapHeight
+			gGlobalSyncTable.Convar_DucktapFrictionMultiplier = DefaultSettings.ducktapFrictionMulitplier
+		end
+		-- Save new defaults
+		if (mod_storage_load_number(config .. ".msv") < mod_storage_version) then
 			save_config(config)
 		end
 	elseif (mod_storage_load_number("default.s") ~= nil and mod_storage_load_number("default.s") > 0) then
@@ -451,6 +468,9 @@ function save_config(config)
 	mod_storage_save_number(config .. ".effcd",gGlobalSyncTable.Convar_EdgeFrictionForwardCheckDistance)
 	mod_storage_save_number(config .. ".efdcd",gGlobalSyncTable.Convar_EdgeFrictionDownCheckDistance)
 	mod_storage_save_number(config .. ".ebm",gGlobalSyncTable.Convar_EBrakeFrictionMultiplier)
+	mod_storage_save_number(config .. ".dt",gGlobalSyncTable.Convar_DucktapEnabled)
+	mod_storage_save_number(config .. ".dth",gGlobalSyncTable.Convar_DucktapHeight)
+	mod_storage_save_number(config .. ".dtfm",gGlobalSyncTable.Convar_DucktapFrictionMultiplier)
 	mod_storage_save_number(config .. ".msv",mod_storage_version)
 end
 
@@ -696,6 +716,9 @@ if (network_is_server()) then
 			djui_chat_message_create("\\#A0FFE0\\'/mq_server PlayerJumpHeight [value]'\\#FFFFFF\\ - Default is 1.0")
 			djui_chat_message_create("\\#A0FFE0\\'/mq_server EBrake [on/off]'\\#FFFFFF\\ - Default is on")
 			djui_chat_message_create("\\#A0FFE0\\'/mq_server EBrakeFrictionMultiplier [value]'\\#FFFFFF\\ - Default is 2.0")
+			djui_chat_message_create("\\#A0FFE0\\'/mq_server Ducktap [on/off]'\\#FFFFFF\\ - Default is on")
+			djui_chat_message_create("\\#A0FFE0\\'/mq_server DucktapHeight [value]'\\#FFFFFF\\ - Default is 36")
+			djui_chat_message_create("\\#A0FFE0\\'/mq_server DucktapFrictionMultiplier [value]'\\#FFFFFF\\ - Default is 0.3")
 			djui_chat_message_create("\\#A0FFE0\\'/mq_server GroundPound [on/off]'\\#FFFFFF\\ - Default is on")
 			djui_chat_message_create("\\#A0FFE0\\'/mq_server WallJump [on/off]'\\#FFFFFF\\ - Default is on")
 			djui_chat_message_create("\\#A0FFE0\\'/mq_server Interact [on/off]'\\#FFFFFF\\ - Default is on")
@@ -788,6 +811,21 @@ if (network_is_server()) then
 			djui_chat_message_create("\\#A0FFE0\\EBrakeFrictionMultiplier changed to " .. gGlobalSyncTable.Convar_EBrakeFrictionMultiplier)
 			return true
 		end
+		if args[1] == "Ducktap" and args[2] ~= nil then
+			gGlobalSyncTable.Convar_DucktapEnabled = args[2]=="on"
+			djui_chat_message_create("\\#A0FFE0\\DucktapEnabled changed to " .. tostring(gGlobalSyncTable.Convar_DucktapEnabled))
+			return true
+		end
+		if args[1] == "DucktapHeight" and args[2] ~= nil then
+			gGlobalSyncTable.Convar_DucktapHeight = tonumber(args[2])
+			djui_chat_message_create("\\#A0FFE0\\DucktapHeight changed to " .. gGlobalSyncTable.Convar_DucktapHeight)
+			return true
+		end
+		if args[1] == "DucktapFrictionMultiplier" and args[2] ~= nil then
+			gGlobalSyncTable.Convar_DucktapFrictionMultiplier = tonumber(args[2])
+			djui_chat_message_create("\\#A0FFE0\\DucktapFrictionMultiplier changed to " .. gGlobalSyncTable.Convar_DucktapFrictionMultiplier)
+			return true
+		end
 		if args[1] == "PlayerJumpHeight" and args[2] ~= nil then
 			gGlobalSyncTable.Convar_PlayerJumpHeight = tonumber(args[2])
 			djui_chat_message_create("\\#A0FFE0\\PlayerJumpHeight changed to " .. gGlobalSyncTable.Convar_PlayerJumpHeight)
@@ -826,8 +864,31 @@ if (network_is_server()) then
 			load_config("default")
 			return true
 		elseif args[1] == "DeleteConfig" and args[2] ~= nil then
-			if (mod_storage_load_number(args[2] .. ".s") ~= nil) then
-				mod_storage_remove(args[2] .. ".s") -- TODO: since keys are limited, we should delete all of them
+			if (mod_storage_load_number(args[2] .. ".msv") > 0 or mod_storage_load_number(args[2] .. ".s") > 0) then
+				mod_storage_remove(args[2] .. ".s")
+				mod_storage_remove(args[2] .. ".ss")
+				mod_storage_remove(args[2] .. ".gp")
+				mod_storage_remove(args[2] .. ".wj")
+				mod_storage_remove(args[2] .. ".i")
+				mod_storage_remove(args[2] .. ".as")
+				mod_storage_remove(args[2] .. ".eb")
+				mod_storage_remove(args[2] .. ".ah")
+				mod_storage_remove(args[2] .. ".j")
+				mod_storage_remove(args[2] .. ".f")
+				mod_storage_remove(args[2] .. ".s")
+				mod_storage_remove(args[2] .. ".aa")
+				mod_storage_remove(args[2] .. ".a")
+				mod_storage_remove(args[2] .. ".ac")
+				mod_storage_remove(args[2] .. ".g")
+				mod_storage_remove(args[2] .. ".efm")
+				mod_storage_remove(args[2] .. ".efgo")
+				mod_storage_remove(args[2] .. ".effcd")
+				mod_storage_remove(args[2] .. ".efdcd")
+				mod_storage_remove(args[2] .. ".ebm")
+				mod_storage_remove(args[2] .. ".dt")
+				mod_storage_remove(args[2] .. ".dth")
+				mod_storage_remove(args[2] .. ".dtfm")
+				mod_storage_remove(args[2] .. ".msv")
 				djui_chat_message_create("\\#A0FFE0\\Deleted config '" .. args[2] .. "'")
 				return true
 			else

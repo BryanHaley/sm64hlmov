@@ -39,7 +39,10 @@ DefaultSettings = {
 	interact = true,
 	stickySlope = false,
 	autoHop = true,
-	autoStrafe = false
+	autoStrafe = false,
+	ducktap = true,
+	ducktapHeight = 36,
+	ducktapFrictionMulitplier = 0.3
 }
 
 if (network_is_server()) then
@@ -64,6 +67,10 @@ if (network_is_server()) then
 
 	gGlobalSyncTable.Convar_EBrakeEnabled = DefaultSettings.ebrake
 	gGlobalSyncTable.Convar_EBrakeFrictionMultiplier = DefaultSettings.ebrakeFrictionMultiplier
+
+	gGlobalSyncTable.Convar_DucktapEnabled = DefaultSettings.ducktap
+	gGlobalSyncTable.Convar_DucktapHeight = DefaultSettings.ducktapHeight
+	gGlobalSyncTable.Convar_DucktapFrictionMultiplier = DefaultSettings.ducktapFrictionMulitplier
 	
 	sv_sticky = false
 	sv_maxspeed = 180

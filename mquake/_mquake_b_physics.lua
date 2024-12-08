@@ -174,8 +174,8 @@ function SV_UserFriction(m)
 	end
 
 	-- Reduce friction when ducktapping
-	if (m.floor ~= nil and m.controller.buttonDown & R_TRIG ~= 0) then
-		friction = friction * 0.3
+	if (gGlobalSyncTable.Convar_DucktapEnabled and m.floor ~= nil and m.controller.buttonDown & R_TRIG ~= 0) then
+		friction = friction * gGlobalSyncTable.Convar_DucktapFrictionMultiplier
 	end
 
 	if (speed <= sv_stopspeed) then
