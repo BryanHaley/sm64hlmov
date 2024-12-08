@@ -173,6 +173,10 @@ function SV_UserFriction(m)
 		end
 	end
 
+	-- Reduce friction when ducktapping
+	if (m.floor ~= nil and m.controller.buttonDown & R_TRIG ~= 0) then
+		friction = friction * 0.3
+	end
 
 	if (speed <= sv_stopspeed) then
 		control = sv_stopspeed
