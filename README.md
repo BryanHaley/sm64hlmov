@@ -18,7 +18,7 @@
 - Obtain a Super Mario 64 z64 ROM
   - WE CANNOT DISTRIBUTE THIS ROM FILE
   - The only legal way to do this is to back it up from your actual SM64 cart OR extract it from a legally purchased copy of SM64 on the Wii, Wii U, or Switch eShops.
-- Extract this zip into your sm64coopdx/mods/ folder
+- Extract the zip of this repository into your sm64coopdx/mods/ folder
   - You should see sm64coopdx/mods/mQuake, sm64coopdx/mods/crowbar, etc.
 - Start sm64coopdx
   - Drag your sm64 z64 ROM file into the window
@@ -29,8 +29,8 @@
   - Leave all other settings at default
   - Click Back
   - Click "Mods and Gamemodes"
-  - Enable mQuake [sm64hlmov custom], IL Run Helper (for single level runs) and/or MariomodXT (for full runs)
-  - Optionally enable mQuake Input Viewer, HL1 HUD, Half-Life Crowbar, and Half-Life Music
+  - Enable mQuake [sm64hlmov custom] and MariomodXT (for full runs) OR IL Run Helper (for single level runs)
+  - Optionally enable Better FPS Skybox, mQuake Input Viewer, HL1 HUD, Half-Life Crowbar, and Half-Life Music
   - Disable all other mods
   - Click Back
   - Click Host, then click Host again. The game should start.
@@ -39,13 +39,12 @@
   - You will likely also want to set up your key binds to be more like Half-Life. This can be done under Options -> N64 Binds.
 
 ### Misc Notes
-- Try turning Deceleration all the way down under camera settings. It may make the mouse "feel" better.
 - If you have a non-sm64hlmov custom copy of mQuake, you will need to delete it entirely when installing this version of mQuake; this is because sm64coopdx will preferentially use the compiled luac files over the lua source files distributed with this version.
+- Try messing with deceleration under camera settings. It may make the mouse "feel" better.
 - No scripts or autohotkeys are allowed in the run. Auto hopping is allowed and enabled by default in mQuake.
 - Use `/mq_server DeleteConfig default` to restore the default run-legal configuration.
 - Edge friction is by default set at 1.3x. Any multiplier between 1.0 (disabled) and 2.0 (double friction near edges) should be fine and can be set like so: `/mq_server EdgeFrictionMultiplier 1.0`
 - Dpad Down is a brake/walk button similar to holding 'E' in Half-Life.
 - The Discord authorize thing is annoying and there's no launch flag (yet) to turn it off. However, the perms it asks for are relatively innocuous, and it'll stop asking after you authorize it.
   - https://github.com/coop-deluxe/sm64coopdx/issues/514
-- You may enable the Day Night Cycle DX mod to get a "real" less nauseating skyboxes. You can use `/time scale 0` to "lock" in the time. If you do it around 8AM, it should look right.
 - Shout out to Jeepy (twitch.tv/jeepy) who found mQuake and silently routed it for months to turn it into a real speedrun!
