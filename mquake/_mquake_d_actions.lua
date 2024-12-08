@@ -118,7 +118,7 @@ local function local_act_dm_grounded_movement(m)
 
 	-- Auto Ducktap
 	if (gGlobalSyncTable.Convar_DucktapEnabled and m.floor ~= nil and m.controller.buttonDown & R_TRIG ~= 0) then
-		m.pos.y = m.floorHeight + gGlobalSyncTable.Convar_DucktapHeight
+		m.pos.y = m.pos.y + gGlobalSyncTable.Convar_DucktapHeight
 		set_mario_action(m, ACT_DM_AIR_MOVEMENT, 0)
 		act_dm_air_movement(m)
 	end
