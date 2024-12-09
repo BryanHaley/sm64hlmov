@@ -143,7 +143,10 @@ local function local_act_dm_air_movement(m)
 		-- return
 	end
 	
-	if (m.controller.buttonPressed & Z_TRIG) ~= 0 and (m.controller.buttonDown & A_BUTTON) == 0 and sv_groundpound and m.heldObj == nil and no_dialog_open() then --and m.prevAction ~= ACT_DM_WATER_MOVEMENT then 
+	if (m.controller.buttonPressed & Z_TRIG) ~= 0 and (m.controller.buttonDown & A_BUTTON) == 0 and sv_groundpound and m.heldObj == nil and no_dialog_open() and (
+			-- Ducktap is disabled OR ducktap is enabled and we're not holding R
+			not gGlobalSyncTable.Convar_DucktapEnabled or ((m.controller.buttonDown & R_TRIG) == 0 and gGlobalSyncTable.Convar_DucktapEnabled)
+		) then
 		m.vel.y = 0
 		m.controller.buttonPressed = m.controller.buttonPressed & ~Z_TRIG
 		set_mario_action(m, ifelse(metal_underwater,ACT_DM_GROUND_POUND_METAL,ACT_GROUND_POUND), 1)

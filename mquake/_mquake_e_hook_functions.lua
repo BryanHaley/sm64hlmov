@@ -578,7 +578,10 @@ function local_update(m)
 	
 	SV_HandleSpecialFloors(m,false)
 	
-	local shouldCrouch = ((((m.controller.buttonDown & Z_TRIG) ~= 0 and m.health > 0xFF) or m.action == ACT_GROUND_POUND or m.action == ACT_DM_GROUND_POUND_METAL) and m.action ~= ACT_DM_WATER_MOVEMENT) or (gPlayerSyncTable[m.playerIndex].playerCrouching and m.ceilHeight < m.pos.y + m.marioObj.hitboxHeight)
+	local shouldCrouch = (((((m.controller.buttonDown & Z_TRIG) ~= 0 and m.health > 0xFF) or m.action == ACT_GROUND_POUND or m.action == ACT_DM_GROUND_POUND_METAL) and m.action ~= ACT_DM_WATER_MOVEMENT) or (gPlayerSyncTable[m.playerIndex].playerCrouching and m.ceilHeight < m.pos.y + m.marioObj.hitboxHeight)) and (
+		-- Ducktap is disabled OR ducktap is enabled and we're not holding R
+		not gGlobalSyncTable.Convar_DucktapEnabled or ((m.controller.buttonDown & R_TRIG) == 0 and gGlobalSyncTable.Convar_DucktapEnabled)
+	)
 	if (DM_ACTION_FORCEANGLE[m.action] ~= nil and not cl_bowserthrow) then 
 		m.faceAngle.y = m.area.camera.yaw + (0x8000*DM_ACTION_FORCEANGLE[m.action])
 	end
