@@ -41,7 +41,7 @@ DefaultSettings = {
 	autoHop = true,
 	autoStrafe = false,
 	ducktap = true,
-	ducktapHeight = 36,
+	ducktapHeight = 80,
 	ducktapFrictionMulitplier = 0.3
 }
 
