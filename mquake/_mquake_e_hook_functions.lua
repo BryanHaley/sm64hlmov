@@ -1,6 +1,12 @@
 if SM64COOPDX_VERSION == nil then return end
 local is_player_active,vec3f_copy,set_mario_action,perform_air_step,save_file_get_flags,save_file_set_flags,save_file_do_save,get_current_save_file_num,vec3f_dot,get_id_from_behavior,djui_hud_set_color,djui_hud_render_rect,djui_hud_print_text,djui_hud_set_resolution,djui_hud_get_screen_width,djui_hud_get_screen_height,djui_hud_set_font,vec3f_length,math_floor,djui_hud_measure_text,get_cutscene_from_mario_status,obj_get_first,obj_get_next,obj_get_nearest_object_with_behavior_id,obj_check_hitbox_overlap = is_player_active,vec3f_copy,set_mario_action,perform_air_step,save_file_get_flags,save_file_set_flags,save_file_do_save,get_current_save_file_num,vec3f_dot,get_id_from_behavior,djui_hud_set_color,djui_hud_render_rect,djui_hud_print_text,djui_hud_set_resolution,djui_hud_get_screen_width,djui_hud_get_screen_height,djui_hud_set_font,vec3f_length,math.floor,djui_hud_measure_text,get_cutscene_from_mario_status,obj_get_first,obj_get_next,obj_get_nearest_object_with_behavior_id,obj_check_hitbox_overlap
 
+local increase_speed_color = { r = 255, g = 255, b = 255, a = 255 }
+local decrease_speed_color = { r = 255, g = 0, b = 0, a = 255 }
+local default_speed_color = { r = 255, g = 255, b = 255, a = 255 }
+
+local last_hspeed = 0
+local current_speed_color = { r = 255, g = 255, b = 255, a = 255 }
 function safe_load_number(key, default)
 	-- TODO: mod_storage_load_number actually just returns 0 if it fails. Ugh.
 	if mod_storage_load_number(key) ~= nil then
@@ -241,7 +247,7 @@ local function render_speed(w2,h2,textWidth,h_offset,hspeed_text,scale,height)
 	local scale1 = scale*0.5
 	djui_hud_set_color(0,0,0,100)
 	djui_hud_render_rect((w2*0.5) - (textWidth*scale1) - 1,(h2*h_offset),textWidth*scale + 2,height)
-	djui_hud_set_color(255,255,255,255)
+	djui_hud_set_color(current_speed_color.r,current_speed_color.g,current_speed_color.b,current_speed_color.a)
 	djui_hud_print_text(hspeed_text, (w2*0.5) - (textWidth*scale1),(h2*h_offset),scale)
 end
 
@@ -275,6 +281,21 @@ function render_hud_effects()
 		local h2 = djui_hud_get_screen_height()
 		
 		local hspeed = m.forwardVel*sv_scalerate_inverse ; if (DM_ACTION_QPHYS[m.action] == 1) then hspeed = vec3f_length({x=m.vel.x,y=0,z=m.vel.z}) end
+
+		if hspeed > last_hspeed then
+			current_speed_color = increase_speed_color
+		end
+
+		if hspeed == last_hspeed then
+
+			current_speed_color = default_speed_color
+		end
+
+		if hspeed < last_hspeed then
+
+			current_speed_color = decrease_speed_color
+		end
+
 		local hspeed_text = tostring(math.floor(hspeed))
 		local textWidth = djui_hud_measure_text(hspeed_text)
 		render_speed(w2,h2,textWidth,0.8,hspeed_text,0.5,15)
@@ -324,6 +345,7 @@ function render_hud_effects()
 			djui_hud_render_rect((w2*0.5) - 5,(h2*0.5),9,1)
 			djui_hud_render_rect((w2*0.5) - 1,(h2*0.5) - 4,1,9)
 		end
+		last_hspeed = hspeed
 	end
 end
 
