@@ -284,7 +284,8 @@ function SV_PlayerMovement(m)
 			local tempNormal = vec3_invert(m.floor.normal)
 			tempNormal.y = 0 ; vec3f_normalize(tempNormal)
 			local amount = (cl_grounddefacto * clampf(vec3f_dot(wishVel,tempNormal),0,1)) * m.floor.normal.y
-			vec3f_sub(wishVel,vec3_scale(vec3f_project(wishVel, m.floor.normal), amount))
+			local tempTable = {x=0,y=0,z=0} ; vec3f_project(tempTable, wishVel, m.floor.normal)
+			vec3f_sub(wishVel,vec3_scale(tempTable, amount))
 			vec3f_add(wishVel,vec3_scale(m.floor.normal, amount*0.125))
 		end
 	end
